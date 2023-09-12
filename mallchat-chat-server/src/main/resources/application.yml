@@ -9,6 +9,9 @@ spring:
     username: ${mallchat.mysql.username}
     password: ${mallchat.mysql.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
   redis:
     # Redis服务器地址
     host: ${mallchat.redis.host}
@@ -32,3 +35,5 @@ wx:
         secret: ${mallchat.wx.secret} # 公众号的appsecret
         token: ${mallchat.wx.token} # 接口配置里的Token值
         aesKey: ${mallchat.wx.aesKey} # 接口配置里的EncodingAESKey值
+jwt:
+  secret: ${mallchat.jwt.secret}
