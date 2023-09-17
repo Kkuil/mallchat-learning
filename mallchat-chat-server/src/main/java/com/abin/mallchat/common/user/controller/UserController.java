@@ -1,6 +1,5 @@
 package com.abin.mallchat.common.user.controller;
 
-
 import com.abin.mallchat.common.common.domain.vo.resp.ApiResult;
 import com.abin.mallchat.common.common.utils.AssertUtil;
 import com.abin.mallchat.common.common.utils.RequestHolder;
@@ -14,19 +13,15 @@ import com.abin.mallchat.common.user.service.IRoleService;
 import com.abin.mallchat.common.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
 /**
- * <p>
- * 用户表 前端控制器
- * </p>
- *
- * @author <a href="https://github.com/zongzibinbin">abin</a>
- * @since 2023-08-27
+ * @Author <a href="https://github.com/zongzibinbin">abin</a>
+ * @Date 2023/09/17
  */
 @RestController
 @RequestMapping("/capi/user")

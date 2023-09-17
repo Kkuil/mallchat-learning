@@ -56,7 +56,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
         // 握手认证事件
         if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
-            // 获取在 升级成Websocket协议之前请求头中携带的token值 （在这个类（MyHeaderCollectHandler）中收集的）
+            // 获取在 升级成Websocket协议之前请求头中携带的token值 （在这个类（HttpHeadersHandler）中收集的）
             String token = NettyUtil.getAttr(ctx.channel(), NettyUtil.TOKEN);
             // 非空则进行权限验证
             if (StrUtil.isNotBlank(token)) {
@@ -88,16 +88,6 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
     }
 
     /**
-     * 用户下线统一处理
-     */
-    private void userOffline(Channel channel) {
-        // 删除连接
-        webSocketService.offline(channel);
-        // 连接关闭
-        channel.close();
-    }
-
-    /**
      * 消息读取事件
      *
      * @param ctx 上线文对象
@@ -109,8 +99,10 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
         String text = msg.text();
         // 转为websocket请求对象(消息包装)
         WSBaseReq wsBaseReq = JSONUtil.toBean(text, WSBaseReq.class);
-        // 判断连接类型
-        switch (WSReqTypeEnum.of(wsBaseReq.getType())) {
+        // 获取请求类型
+        WSReqTypeEnum type = WSReqTypeEnum.of(wsBaseReq.getType());
+        // 判断请求类型
+        switch (type) {
             // 授权请求
             case AUTHORIZE:
                 webSocketService.authorize(ctx.channel(), wsBaseReq.getData());
@@ -123,7 +115,18 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
                 webSocketService.handleLoginReq(ctx.channel());
                 break;
             default:
+                log.info("未知类型");
                 break;
         }
+    }
+
+    /**
+     * 用户下线统一处理
+     */
+    private void userOffline(Channel channel) {
+        // 删除连接
+        webSocketService.offline(channel);
+        // 连接关闭
+        channel.close();
     }
 }

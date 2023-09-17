@@ -3,6 +3,7 @@ package com.abin.mallchat.common.user.service.impl;
 import cn.hutool.core.thread.NamedThreadFactory;
 import cn.hutool.http.HttpUtil;
 import com.abin.mallchat.common.common.domain.vo.resp.ApiResult;
+import com.abin.mallchat.common.common.exception.BusinessException;
 import com.abin.mallchat.common.common.utils.JsonUtils;
 import com.abin.mallchat.common.user.dao.UserDao;
 import com.abin.mallchat.common.user.domain.entity.IpDetail;
@@ -13,10 +14,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import javax.annotation.Resource;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,21 +28,55 @@ import java.util.concurrent.TimeUnit;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description
  */
 @Service
 @Slf4j
-public class IpServiceImpl implements IpService , DisposableBean {
-    private static ExecutorService executor = new ThreadPoolExecutor(1, 1,
-            0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>(500), new NamedThreadFactory("refresh-ipDetail", false));
+public class IpServiceImpl implements IpService, DisposableBean {
+
+    /**
+     * 线程池
+     */
+    private static final ExecutorService EXECUTOR = new ThreadPoolExecutor(
+            1,
+            1,
+            0L,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(500),
+            new NamedThreadFactory("refresh-ipDetail", false)
+    );
+
+    /**
+     * 每次获取IP详情的间隔时间
+     */
+    public static final int INTERVAL_TIME_PER_GET_IP_DETAIL = 2000;
+
+    /**
+     * 获取IP详情的URL模板
+     */
+    public static final String GET_IP_DETAIL_URL = "https://ip.taobao.com/outGetIpInfo?ip=%s&accessKey=alibaba-inc";
+
+    /**
+     * 线程停止前的最大等待时间（为了实现优雅停机），到了时间直接停止所有任务
+     */
+    public static final int MAX_WAIT_TIME_BEFORE_SHUT_DOWN_THREAD_POOL = 30;
+
+    /**
+     * 获取IP归属地详情时的最大重试次数
+     */
+    private static final int MAX_RETRY_COUNT_GET_IP_DETAIL = 5;
 
     @Resource
     private UserDao userDao;
 
+    /**
+     * 异步刷新当前用户IP详情
+     *
+     * @param uid 用户ID
+     */
     @Override
     public void refreshIpDetailAsync(Long uid) {
-        executor.execute(() -> {
+        EXECUTOR.execute(() -> {
             User user = userDao.getById(uid);
             IpInfo ipInfo = user.getIpInfo();
             if (Objects.isNull(ipInfo)) {
@@ -61,55 +97,36 @@ public class IpServiceImpl implements IpService , DisposableBean {
         });
     }
 
+    /**
+     * 获取IP归属地详情
+     *
+     * @param ip ip地址
+     * @return IP归属地详情
+     */
+    @Retryable(value = RuntimeException.class, maxAttempts = MAX_RETRY_COUNT_GET_IP_DETAIL, backoff = @Backoff(delay = INTERVAL_TIME_PER_GET_IP_DETAIL))
     private static IpDetail tryGetIpDetailOrNullTreeTimes(String ip) {
-        for (int i = 0; i < 3; i++) {
-            IpDetail ipDetail = getIpDetailOrNull(ip);
-            if (Objects.nonNull(ipDetail)) {
-                return ipDetail;
-            }
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                log.error("tryGetIpDetailOrNullTreeTimes InterruptedException", e);
-            }
+        String url = String.format(GET_IP_DETAIL_URL, ip);
+        String result = HttpUtil.get(url);
+        ApiResult<IpDetail> ipResult = JsonUtils.toObj(result, new TypeReference<ApiResult<IpDetail>>() {
+        });
+        IpDetail detail = ipResult.getData();
+        if (Objects.isNull(detail)) {
+            throw new BusinessException("重试");
         }
-        return null;
+        return detail;
     }
 
-    private static IpDetail getIpDetailOrNull(String ip) {
-        try {
-            String url = "https://ip.taobao.com/outGetIpInfo?ip=" + ip + "&accessKey=alibaba-inc";
-            String data = HttpUtil.get(url);
-            ApiResult<IpDetail> result = JsonUtils.toObj(data, new TypeReference<ApiResult<IpDetail>>() {
-            });
-            IpDetail detail = result.getData();
-            return detail;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static void main(String[] args) {
-        Date begin = new Date();
-        for (int i = 0; i < 100; i++) {
-            int finalI = i;
-            executor.execute(() -> {
-                IpDetail ipDetail = tryGetIpDetailOrNullTreeTimes("117.85.133.4");
-                if (Objects.nonNull(ipDetail)) {
-                    Date date = new Date();
-                    System.out.println(String.format("第%d次成功，目前耗时%dms", finalI, (date.getTime() - begin.getTime())));
-                }
-            });
-
-        }
-    }
-
+    /**
+     * Bean销毁时
+     */
     @Override
     public void destroy() throws Exception {
-        executor.shutdown();
-        if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {//最多等30秒，处理不完就拉倒
+        // 优雅停机（不是直接把所有线程停止，而是停止线程的调度）
+        EXECUTOR.shutdown();
+        // 最多等30秒，处理不完就拉倒
+        if (!EXECUTOR.awaitTermination(MAX_WAIT_TIME_BEFORE_SHUT_DOWN_THREAD_POOL, TimeUnit.SECONDS)) {
             if (log.isErrorEnabled()) {
-                log.error("Timed out while waiting for executor [{}] to terminate", executor);
+                log.error("Timed out while waiting for executor [{}] to terminate", EXECUTOR);
             }
         }
     }

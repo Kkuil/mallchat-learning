@@ -14,7 +14,7 @@ import java.util.Optional;
  * @Date 2023/09/17 17:00
  * @Description
  */
-public class MyHeaderCollectHandler extends ChannelInboundHandlerAdapter {
+public class HttpHeadersHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 请求头中真实IP的key

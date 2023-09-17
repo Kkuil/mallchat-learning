@@ -102,7 +102,8 @@ public class NettyWebSocketServer {
                          */
                         pipeline.addLast(new HttpObjectAggregator(8192));
                         // 保存请求头（在Http升级Websocket之前进行请求头参数的收集）
-                        pipeline.addLast(new MyHeaderCollectHandler());
+                        pipeline.addLast(new HttpHeadersHandler());
+                        pipeline.addLast(new NettyCollectorHandler());
                         /**
                          * 说明：
                          *  1. 对于 WebSocket，它的数据是以帧frame 的形式传递的；

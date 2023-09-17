@@ -7,11 +7,12 @@ import com.abin.mallchat.common.user.service.IUserBackpackService;
 import com.abin.mallchat.common.user.service.cache.UserCache;
 import com.abin.mallchat.common.websocket.service.WebSocketService;
 import com.abin.mallchat.common.websocket.service.adapter.WebSocketAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import javax.annotation.Resource;
 
 /**
  * @Author Kkuil

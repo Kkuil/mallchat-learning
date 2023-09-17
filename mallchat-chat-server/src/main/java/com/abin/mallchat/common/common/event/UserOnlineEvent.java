@@ -7,11 +7,11 @@ import org.springframework.context.ApplicationEvent;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description 用户上线事件
  */
 @Getter
 public class UserOnlineEvent extends ApplicationEvent {
-    private User user;
+    private final User user;
 
     public UserOnlineEvent(Object source, User user) {
         super(source);

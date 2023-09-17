@@ -22,6 +22,11 @@ public class NettyUtil {
     public static AttributeKey<String> IP = AttributeKey.valueOf("ip");
 
     /**
+     * 存于上下文对象中的uid key
+     */
+    public static AttributeKey<Long> UID = AttributeKey.valueOf("uid");
+
+    /**
      * 向websocket上下文对象中设置属性
      * 类似于向HttpRequest对象中设置属性
      *

@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationEvent;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description 拉黑用户事件
  */
 @Getter
 public class UserBlackEvent extends ApplicationEvent {
