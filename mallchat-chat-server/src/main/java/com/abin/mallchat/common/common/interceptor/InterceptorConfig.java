@@ -6,17 +6,17 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-09
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
-    @Autowired
+    @Resource
     private TokenInterceptor tokenInterceptor;
-    @Autowired
+    @Resource
     private CollectorInterceptor collectorInterceptor;
-    @Autowired
+    @Resource
     private BlackInterceptor blackInterceptor;
 
     @Override

@@ -15,15 +15,15 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-09
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Component
 @Aspect
 @Order(0)//确保比事务注解先执行，分布式锁在事务外
 public class RedissonLockAspect {
-    @Autowired
+    @Resource
     private LockService lockService;
 
     @Around("@annotation(redissonLock)")

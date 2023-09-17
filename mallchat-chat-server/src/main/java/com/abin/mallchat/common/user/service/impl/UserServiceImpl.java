@@ -18,39 +18,40 @@ import com.abin.mallchat.common.user.domain.vo.resp.UserInfoResp;
 import com.abin.mallchat.common.user.service.UserService;
 import com.abin.mallchat.common.user.service.adapter.UserAdapter;
 import com.abin.mallchat.common.user.service.cache.ItemCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-01
+ * @Author Kkuil
+ * @Date 2023/08/05 12:30
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
-    @Autowired
+    @Resource
     private UserDao userDao;
-    @Autowired
+    @Resource
     private UserBackpackDao userBackpackDao;
-    @Autowired
+    @Resource
     private ItemCache itemCache;
-    @Autowired
+    @Resource
     private ItemConfigDao itemConfigDao;
-    @Autowired
+    @Resource
     private ApplicationEventPublisher applicationEventPublisher;
-    @Autowired
+    @Resource
     private BlackDao blackDao;
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Long register(User insert) {
         userDao.save(insert);
         //发送物品

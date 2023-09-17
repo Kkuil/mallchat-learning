@@ -24,9 +24,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-10
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Service
 @Slf4j
@@ -35,7 +35,7 @@ public class IpServiceImpl implements IpService , DisposableBean {
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>(500), new NamedThreadFactory("refresh-ipDetail", false));
 
-    @Autowired
+    @Resource
     private UserDao userDao;
 
     @Override

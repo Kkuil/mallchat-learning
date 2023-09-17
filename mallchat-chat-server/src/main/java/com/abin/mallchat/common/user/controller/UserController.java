@@ -33,9 +33,9 @@ import java.util.List;
 @Api(tags = "用户相关接口")
 public class UserController {
 
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private IRoleService iRoleService;
 
     @GetMapping("/userInfo")

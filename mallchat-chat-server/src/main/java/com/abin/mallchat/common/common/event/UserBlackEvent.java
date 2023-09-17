@@ -5,9 +5,9 @@ import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-10
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Getter
 public class UserBlackEvent extends ApplicationEvent {

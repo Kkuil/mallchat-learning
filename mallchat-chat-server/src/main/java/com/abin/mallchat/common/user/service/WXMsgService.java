@@ -5,9 +5,9 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-01
+ * @Author Kkuil
+ * @Date 2023/08/05 12:30
+ * @Description 
  */
 public interface WXMsgService {
     /**

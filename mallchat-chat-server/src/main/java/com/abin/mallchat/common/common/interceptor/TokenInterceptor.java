@@ -14,9 +14,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-08
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
@@ -25,7 +25,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     public static final String AUTHORIZATION_SCHEMA = "Bearer ";
     public static final String UID = "uid";
 
-    @Autowired
+    @Resource
     private LoginService loginService;
 
     @Override

@@ -14,17 +14,17 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-09
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Service
 public class UserBackpackServiceImpl implements IUserBackpackService {
-    @Autowired
+    @Resource
     private LockService lockService;
-    @Autowired
+    @Resource
     private UserBackpackDao userBackpackDao;
-    @Autowired
+    @Resource
     @Lazy
     private UserBackpackServiceImpl userBackpackService;
 

@@ -10,9 +10,9 @@ import com.abin.mallchat.common.websocket.domain.vo.resp.WSLoginUrl;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-01
+ * @Author Kkuil
+ * @Date 2023/08/05 12:30
+ * @Description 
  */
 public class WebSocketAdapter {
     public static WSBaseResp<?> buildResp(WxMpQrCodeTicket wxMpQrCodeTicket) {

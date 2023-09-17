@@ -26,13 +26,13 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("wx/portal/public")
 public class WxPortalController {
 
-    @Autowired
+    @Resource
     private WxMpService wxMpService;
-    @Autowired
+    @Resource
     private WxMpService wxService;
-    @Autowired
+    @Resource
     private WxMpMessageRouter messageRouter;
-    @Autowired
+    @Resource
     private WXMsgService wxMsgService;
 
     @GetMapping(produces = "text/plain;charset=utf-8")

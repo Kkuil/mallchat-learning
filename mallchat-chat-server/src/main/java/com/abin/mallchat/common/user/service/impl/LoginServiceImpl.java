@@ -13,15 +13,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-02
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Service
 public class LoginServiceImpl implements LoginService {
     public static final int TOKEN_EXPIRE_DAYS = 3;
     public static final int TOKEN_RENEWAL_DAYS = 1;
-    @Autowired
+    @Resource
     private JwtUtils jwtUtils;
 
     @Override

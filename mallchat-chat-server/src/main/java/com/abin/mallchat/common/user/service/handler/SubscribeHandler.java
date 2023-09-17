@@ -18,7 +18,7 @@ import java.util.Map;
 @Component
 public class SubscribeHandler extends AbstractHandler {
 
-    @Autowired
+    @Resource
     private WXMsgService wxMsgService;
 
     @Override

@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-09
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @RestControllerAdvice
 @Slf4j

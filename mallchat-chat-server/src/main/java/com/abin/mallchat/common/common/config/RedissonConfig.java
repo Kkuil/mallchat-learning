@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RedissonConfig {
-    @Autowired
+    @Resource
     private RedisProperties redisProperties;
 
     @Bean

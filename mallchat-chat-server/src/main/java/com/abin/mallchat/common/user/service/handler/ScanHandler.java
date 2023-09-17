@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Component
 public class ScanHandler extends AbstractHandler {
-    @Autowired
+    @Resource
     private WXMsgService wxMsgService;
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map,

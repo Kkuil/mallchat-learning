@@ -20,9 +20,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Flux;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-08-27
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 
 @SpringBootTest
@@ -30,9 +30,9 @@ import reactor.core.publisher.Flux;
 @Slf4j
 public class DaoTest {
     public static final long UID = 10028L;
-    @Autowired
+    @Resource
     private WxMpService wxMpService;
-    @Autowired
+    @Resource
     private JwtUtils jwtUtils;
 
 
@@ -42,9 +42,9 @@ public class DaoTest {
         System.out.println(login);
     }
 
-    @Autowired
+    @Resource
     private RedissonClient redissonClient;
-    @Autowired
+    @Resource
     private LoginService loginService;
 
     @Test
@@ -54,14 +54,14 @@ public class DaoTest {
         System.out.println(validUid);
     }
 
-    @Autowired
+    @Resource
     private IUserBackpackService iUserBackpackService;
     @Test
     public void acquireItem() {
         iUserBackpackService.acquireItem(UID, ItemEnum.REG_TOP100_BADGE.getId(), IdempotentEnum.UID, UID+"");
     }
 
-    @Autowired
+    @Resource
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Test

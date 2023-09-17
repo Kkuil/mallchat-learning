@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-02
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @AllArgsConstructor
 public class MyThreadFactory implements ThreadFactory {

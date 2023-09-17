@@ -14,20 +14,20 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-10
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Component
 public class UserBlackListener {
 
-    @Autowired
+    @Resource
     private IUserBackpackService userBackpackService;
-    @Autowired
+    @Resource
     private UserDao userDao;
-    @Autowired
+    @Resource
     private WebSocketService webSocketService;
-    @Autowired
+    @Resource
     private UserCache userCache;
 
     @Async

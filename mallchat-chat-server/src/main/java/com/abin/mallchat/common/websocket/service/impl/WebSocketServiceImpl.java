@@ -26,39 +26,48 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Description: 专门管理websocket的逻辑，包括推拉
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-01
+ * @Author Kkuil
+ * @Date 202309/17 17:00:00
+ * @Description 专门管理websocket的逻辑，包括推拉
  */
 @Service
 public class WebSocketServiceImpl implements WebSocketService {
-    @Autowired
+    @Resource
     @Lazy
     private WxMpService wxMpService;
-    @Autowired
+    @Resource
     private UserDao userDao;
-    @Autowired
+    @Resource
     private LoginService loginService;
-    @Autowired
+    @Resource
     private ApplicationEventPublisher applicationEventPublisher;
-    @Autowired
+    @Resource
     private IRoleService iRoleService;
-    @Autowired
+    @Resource
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     /**
-     * 管理所有用户的连接（登录态/游客）
+     * 最多等待用户点击登录的时间
+     */
+    public static final Duration DURATION = Duration.ofHours(1);
+
+    /**
+     * 保存的最大数量
+     */
+    public static final int MAXIMUM_SIZE = 1000;
+
+    /**
+     * 存储所有用户的连接（登录态/游客）
      */
     private static final ConcurrentHashMap<Channel, WSChannelExtraDTO> ONLINE_WS_MAP = new ConcurrentHashMap<>();
 
-    public static final Duration DURATION = Duration.ofHours(1);
-    public static final int MAXIMUM_SIZE = 1000;
     /**
      * 临时保存登录code和channel的映射关系
      */
@@ -67,44 +76,71 @@ public class WebSocketServiceImpl implements WebSocketService {
             .expireAfterWrite(DURATION)
             .build();
 
+    /**
+     * 连接
+     *
+     * @param channel 连接通道
+     */
     @Override
-    public void connect(Channel channel) {
+    public void online(Channel channel) {
+        // 连接，即保存当前channel信息
         ONLINE_WS_MAP.put(channel, new WSChannelExtraDTO());
     }
 
+    /**
+     * 处理登录请求
+     *
+     * @param channel 连接通道
+     */
     @SneakyThrows
     @Override
     public void handleLoginReq(Channel channel) {
-        //生成随机码
+        // 生成随机码
         Integer code = generateLoginCode(channel);
-        //找微信申请带参二维码
+        // 请求微信申请带参二维码
         WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(code, (int) DURATION.getSeconds());
-        //把码推送给前端
+        // 把码推送给前端
         sendMsg(channel, WebSocketAdapter.buildResp(wxMpQrCodeTicket));
     }
 
+    /**
+     * 用户下线
+     *
+     * @param channel 断开连接
+     */
     @Override
-    public void remove(Channel channel) {
+    public void offline(Channel channel) {
         ONLINE_WS_MAP.remove(channel);
-        //todo 用户下线
+        // todo 用户下线
     }
 
+    /**
+     * 处理登录成功事件
+     *
+     * @param code 登录码
+     * @param uid  用户ID
+     */
     @Override
-    public void scanLoginSuccess(Integer code, Long uid) {
-        //确认链接在机器上
+    public void handleScanLoginSuccess(Integer code, Long uid) {
+        // 确认链接在机器上
         Channel channel = WAIT_LOGIN_MAP.getIfPresent(code);
         if (Objects.isNull(channel)) {
             return;
         }
         User user = userDao.getById(uid);
-        //移除code
+        // 移除临时登录缓存
         WAIT_LOGIN_MAP.invalidate(code);
-        //调用登录模块获取token
+        // 调用登录模块获取token
         String token = loginService.login(uid);
-        //用户登录
+        // 用户登录
         loginSuccess(channel, user, token);
     }
 
+    /**
+     * todo
+     *
+     * @param code 登录码
+     */
     @Override
     public void waitAuthorize(Integer code) {
         Channel channel = WAIT_LOGIN_MAP.getIfPresent(code);
@@ -114,46 +150,79 @@ public class WebSocketServiceImpl implements WebSocketService {
         sendMsg(channel, WebSocketAdapter.buildWaitAuthorizeResp());
     }
 
+    /**
+     * 授权
+     *
+     * @param channel 当前通道
+     * @param token   用户token
+     */
     @Override
     public void authorize(Channel channel, String token) {
+        // 解析token，获取token中的uid
         Long validUid = loginService.getValidUid(token);
         if (Objects.nonNull(validUid)) {
             User user = userDao.getById(validUid);
             loginSuccess(channel, user, token);
-
         } else {
             sendMsg(channel, WebSocketAdapter.buildInvalidTokenResp());
         }
     }
 
+    /**
+     * 向所有人推送消息
+     *
+     * @param msg 需要推送的消息
+     */
     @Override
     public void sendMsgToAll(WSBaseResp<?> msg) {
+        // 利用线程池进行推送
         ONLINE_WS_MAP.forEach((channel, ext) -> {
             threadPoolTaskExecutor.execute(() -> sendMsg(channel, msg));
         });
     }
 
+    /**
+     * 登录成功事件
+     *
+     * @param channel 当前通道
+     * @param user    用户对象
+     * @param token   token
+     */
     private void loginSuccess(Channel channel, User user, String token) {
-        //保存channel的对应uid
+        // 保存channel的对应uid
         WSChannelExtraDTO wsChannelExtraDTO = ONLINE_WS_MAP.get(channel);
         wsChannelExtraDTO.setUid(user.getId());
-        //推送成功消息
+        // 推送成功消息
         sendMsg(channel, WebSocketAdapter.buildResp(user, token, iRoleService.hasPower(user.getId(), RoleEnum.CHAT_MANAGER)));
-        //用户上线成功的事件
         user.setLastOptTime(new Date());
+        // 用户登录成功，刷新IP
         user.refreshIp(NettyUtil.getAttr(channel, NettyUtil.IP));
+        // 用户上线成功的事件
         applicationEventPublisher.publishEvent(new UserOnlineEvent(this, user));
     }
 
+    /**
+     * 推送消息
+     *
+     * @param channel 当前通道
+     * @param resp    消息体
+     */
     private void sendMsg(Channel channel, WSBaseResp<?> resp) {
         channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(resp)));
     }
 
+    /**
+     * 生成随机登录码，用于生成随机二维码
+     *
+     * @param channel 当前通道
+     * @return 随机登录码
+     */
     private Integer generateLoginCode(Channel channel) {
-        Integer code;
+        int code = 0;
+        boolean isNotExist = Objects.nonNull(WAIT_LOGIN_MAP.asMap().putIfAbsent(code, channel));
         do {
             code = RandomUtil.randomInt(Integer.MAX_VALUE);
-        } while (Objects.nonNull(WAIT_LOGIN_MAP.asMap().putIfAbsent(code, channel)));
+        } while (isNotExist);
         return code;
     }
 }

@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-09
+ * @Author Kkuil
+ * @Date 2023/09/17 17:00
+ * @Description 
  */
 @Service
 public class LockService {
-    @Autowired
+    @Resource
     private RedissonClient redissonClient;
 
     @SneakyThrows

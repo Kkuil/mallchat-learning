@@ -13,25 +13,36 @@ import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.net.URLEncoder;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Description:
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-01
+ * @Author Kkuil
+ * @Date 2023/08/05 12:30
+ * @Description
  */
 @Service
 @Slf4j
 public class WXMsgServiceImpl implements WXMsgService {
-    @Autowired
+    @Resource
     private WebSocketService webSocketService;
+
+    @Resource
+    private UserDao userDao;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    @Lazy
+    private WxMpService wxMpService;
+
     /**
      * openid和登录code的关系map
      */
@@ -41,13 +52,7 @@ public class WXMsgServiceImpl implements WXMsgService {
     private String callback;
 
     public static final String URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
-    @Autowired
-    private UserDao userDao;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    @Lazy
-    private WxMpService wxMpService;
+
 
     @Override
     public WxMpXmlOutMessage scan(WxMpXmlMessage wxMpXmlMessage) {
@@ -62,7 +67,7 @@ public class WXMsgServiceImpl implements WXMsgService {
         //用户已经注册并授权
         if (registered && authorized) {
             //走登录成功逻辑 通过code找到给channel推送消息
-            webSocketService.scanLoginSuccess(code, user.getId());
+            webSocketService.handleScanLoginSuccess(code, user.getId());
             return null;
         }
         //用户未注册，就先注册
@@ -88,7 +93,7 @@ public class WXMsgServiceImpl implements WXMsgService {
         }
         //通过code找到用户channel，进行登录
         Integer code = WAIT_AUTHORIZE_MAP.remove(openid);
-        webSocketService.scanLoginSuccess(code, user.getId());
+        webSocketService.handleScanLoginSuccess(code, user.getId());
     }
 
     private void fillUserInfo(Long uid, WxOAuth2UserInfo userInfo) {
