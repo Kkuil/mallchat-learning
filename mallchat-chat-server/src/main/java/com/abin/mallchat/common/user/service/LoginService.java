@@ -4,14 +4,14 @@ public interface LoginService {
     /**
      * 刷新token有效期
      *
-     * @param token
+     * @param token token
      */
     void renewalTokenIfNecessary(String token);
 
     /**
      * 登录成功，获取token
      *
-     * @param uid
+     * @param uid 用户ID
      * @return 返回token
      */
     String login(Long uid);
@@ -19,8 +19,8 @@ public interface LoginService {
     /**
      * 如果token有效，返回uid
      *
-     * @param token
-     * @return
+     * @param token token
+     * @return 用户ID
      */
     Long getValidUid(String token);
 }

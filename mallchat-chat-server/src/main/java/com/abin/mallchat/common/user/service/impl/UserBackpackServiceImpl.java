@@ -7,21 +7,19 @@ import com.abin.mallchat.common.user.dao.UserBackpackDao;
 import com.abin.mallchat.common.user.domain.entity.UserBackpack;
 import com.abin.mallchat.common.user.domain.enums.IdempotentEnum;
 import com.abin.mallchat.common.user.service.IUserBackpackService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description
  */
 @Service
 public class UserBackpackServiceImpl implements IUserBackpackService {
-    @Resource
-    private LockService lockService;
     @Resource
     private UserBackpackDao userBackpackDao;
     @Resource
@@ -38,9 +36,10 @@ public class UserBackpackServiceImpl implements IUserBackpackService {
     public void doAcquireItem(Long uid, Long itemId, String idempotent) {
         UserBackpack userBackpack = userBackpackDao.getByIdempotent(idempotent);
         if (Objects.nonNull(userBackpack)) {
+            // 如果已经发放过物品了，则直接返回
             return;
         }
-        //发放物品
+        // 没有发放过，发放物品
         UserBackpack insert = UserBackpack.builder()
                 .uid(uid)
                 .itemId(itemId)

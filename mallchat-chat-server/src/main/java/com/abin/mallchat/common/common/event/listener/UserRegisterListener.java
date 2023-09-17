@@ -45,6 +45,7 @@ public class UserRegisterListener {
     @TransactionalEventListener(classes = UserRegisterEvent.class, phase = TransactionPhase.AFTER_COMMIT)
     public void sendCard(UserRegisterEvent event) {
         User user = event.getUser();
+        // 发放改名卡
         userBackpackService.acquireItem(user.getId(), ItemEnum.MODIFY_NAME_CARD.getId(), IdempotentEnum.UID, user.getId().toString());
     }
 

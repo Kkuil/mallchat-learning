@@ -72,34 +72,36 @@ public class UserServiceImpl implements UserService {
     @RedissonLock(key = "#uid")
     public void modifyName(Long uid, String name) {
         User oldUser = userDao.getByName(name);
+        // 断定他为空，如果不为空则返回修改错误信息
         AssertUtil.isEmpty(oldUser, "名字已经被抢占了，请换一个~");
         UserBackpack modifyNameItem = userBackpackDao.getFirstValidItem(uid, ItemEnum.MODIFY_NAME_CARD.getId());
+        // 断定他不为空，如果为空则返回改名卡不足错误信息
         AssertUtil.isNotEmpty(modifyNameItem, "改名卡不够了，等后续活动送改名卡吧");
-        //使用改名卡
+        // 使用改名卡
         boolean success = userBackpackDao.useItem(modifyNameItem);
         if (success) {
-            //改名
+            // 改名
             userDao.modifyName(uid, name);
         }
     }
 
     @Override
     public List<BadgeResp> badges(Long uid) {
-        //查询所有徽章
+        // 查询所有徽章
         List<ItemConfig> itemConfigs = itemCache.getByType(ItemTypeEnum.BADGE.getType());
-        //查询用户拥有徽章
+        // 查询用户拥有徽章
         List<UserBackpack> backpacks = userBackpackDao.getByItemIds(uid, itemConfigs.stream().map(ItemConfig::getId).collect(Collectors.toList()));
-        //查询用户佩戴的徽章
+        // 查询用户佩戴的徽章
         User user = userDao.getById(uid);
         return UserAdapter.buildBadgeResp(itemConfigs, backpacks, user);
     }
 
     @Override
     public void wearingBadge(Long uid, Long itemId) {
-        //确保有徽章
+        // 确保有徽章
         UserBackpack firstValidItem = userBackpackDao.getFirstValidItem(uid, itemId);
         AssertUtil.isNotEmpty(firstValidItem, "您还没有这个徽章，快去获得吧");
-        //确保这个物品是徽章
+        // 确保这个物品是徽章
         ItemConfig itemConfig = itemConfigDao.getById(firstValidItem.getItemId());
         AssertUtil.equal(itemConfig.getType(), ItemTypeEnum.BADGE.getType(), "只有徽章才能佩戴");
         userDao.wearingBadge(uid, itemId);

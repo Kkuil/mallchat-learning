@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description 全局异常捕获器
  */
 @RestControllerAdvice
 @Slf4j
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BusinessException.class)
     public ApiResult<?> businessException(BusinessException e) {
         log.info("business exception! The reason is:{}", e.getMessage());
-        return ApiResult.fail(e.getErrorCode(),e.getErrorMsg());
+        return ApiResult.fail(e.getErrorCode(), e.getErrorMsg());
     }
 
     /**
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Throwable.class)
     public ApiResult<?> throwable(Throwable e) {
-        log.error("system exception! The reason is:{}", e.getMessage(),e);
+        log.error("system exception! The reason is:{}", e.getMessage(), e);
         return ApiResult.fail(CommonErrorEnum.SYSTEM_ERROR);
     }
 }

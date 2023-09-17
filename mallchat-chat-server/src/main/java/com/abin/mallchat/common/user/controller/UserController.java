@@ -55,7 +55,10 @@ public class UserController {
     @PutMapping("/badge")
     @ApiOperation("佩戴徽章")
     public ApiResult<Void> wearingBadge(@Valid @RequestBody WearingBadgeReq req) {
-        userService.wearingBadge(RequestHolder.get().getUid(), req.getItemId());
+        Long uid = RequestHolder.get().getUid();
+        Long itemId = req.getItemId();
+        userService.wearingBadge(uid, itemId);
+        // 幂等设计，不管请求（点击佩戴）多少次，都返回空数据
         return ApiResult.success();
     }
 
@@ -64,6 +67,7 @@ public class UserController {
     public ApiResult<Void> black(@Valid @RequestBody BlackReq req) {
         Long uid = RequestHolder.get().getUid();
         boolean hasPower = iRoleService.hasPower(uid, RoleEnum.ADMIN);
+        // 断定他为真，如果不为空返回报错信息
         AssertUtil.isTrue(hasPower, "抹茶管理员没权限");
         userService.black(req);
         return ApiResult.success();

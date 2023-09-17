@@ -82,16 +82,14 @@ public class RedisUtils {
      * @param time     时间(秒)
      * @param timeUnit 单位
      */
-    public static Boolean expire(String key, long time, TimeUnit timeUnit) {
+    public static void expire(String key, long time, TimeUnit timeUnit) {
         try {
             if (time > 0) {
                 stringRedisTemplate.expire(key, time, timeUnit);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return false;
         }
-        return true;
     }
 
     /**
@@ -107,7 +105,8 @@ public class RedisUtils {
     /**
      * 根据 key 获取过期时间
      *
-     * @param key 键 不能为null
+     * @param key      键不能为null
+     * @param timeUnit 时间单位
      * @return 时间(秒) 返回0代表为永久有效
      */
     public static Long getExpire(String key, TimeUnit timeUnit) {

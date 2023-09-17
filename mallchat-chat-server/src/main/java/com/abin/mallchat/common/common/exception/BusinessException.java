@@ -1,12 +1,14 @@
 package com.abin.mallchat.common.common.exception;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
  * @Description 
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class BusinessException extends RuntimeException {
 

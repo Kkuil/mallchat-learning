@@ -6,14 +6,22 @@ import lombok.Getter;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description
  */
 @AllArgsConstructor
 @Getter
 public enum IdempotentEnum {
 
-    UID(1, "uid"),
-    MSG_ID(2, "消息id");
+    /**
+     * 用户ID
+     */
+    UID(1, "用户id"),
+    /**
+     * 消息ID
+     */
+    MSG_ID(2, "消息id"),
+    ;
+
     private final Integer type;
     private final String desc;
 }

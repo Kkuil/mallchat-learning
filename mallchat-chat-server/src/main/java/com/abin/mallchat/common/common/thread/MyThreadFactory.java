@@ -11,14 +11,15 @@ import java.util.concurrent.ThreadFactory;
  */
 @AllArgsConstructor
 public class MyThreadFactory implements ThreadFactory {
-    private static final MyUncaughtExceptionHandler MY_UNCAUGHT_EXCEPTION_HANDLER = new MyUncaughtExceptionHandler();
+    private static final UncaughtExceptionHandler UNCAUGHT_EXCEPTION_HANDLER = new UncaughtExceptionHandler();
     private ThreadFactory original;
 
     @Override
     public Thread newThread(Runnable r) {
-        Thread thread = original.newThread(r);//执行spring线程自己的创建逻辑
-        //额外装饰我们需要的创建逻辑
-        thread.setUncaughtExceptionHandler(MY_UNCAUGHT_EXCEPTION_HANDLER);
+        // 执行spring线程自己的创建逻辑
+        Thread thread = original.newThread(r);
+        // 额外装饰我们需要的创建逻辑
+        thread.setUncaughtExceptionHandler(UNCAUGHT_EXCEPTION_HANDLER);
         return thread;
     }
 }
