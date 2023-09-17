@@ -29,7 +29,7 @@ import reactor.core.publisher.Flux;
 @RunWith(SpringRunner.class)
 @Slf4j
 public class DaoTest {
-    public static final long UID = 20001L;
+    public static final long UID = 10028L;
     @Autowired
     private WxMpService wxMpService;
     @Autowired

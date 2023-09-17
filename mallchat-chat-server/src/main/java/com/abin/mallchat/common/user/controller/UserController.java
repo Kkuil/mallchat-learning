@@ -74,4 +74,3 @@ public class UserController {
         return ApiResult.success();
     }
 }
-
