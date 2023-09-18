@@ -1,6 +1,6 @@
 package com.abin.mallchat.common.websocket.service;
 
-import com.abin.mallchat.common.websocket.domain.vo.resp.WSBaseResp;
+import com.abin.mallchat.common.websocket.domain.vo.resp.WsBaseResp;
 import io.netty.channel.Channel;
 
 /**
@@ -59,5 +59,5 @@ public interface WebSocketService {
      *
      * @param msg 需要推送的消息
      */
-    void sendMsgToAll(WSBaseResp<?> msg);
+    void sendMsgToAll(WsBaseResp<?> msg);
 }

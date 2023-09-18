@@ -2,6 +2,7 @@ package com.abin.mallchat.common.common.service;
 
 import com.abin.mallchat.common.common.exception.BusinessException;
 import com.abin.mallchat.common.common.exception.CommonErrorEnum;
+import com.abin.mallchat.common.common.interfaces.Supplier;
 import lombok.SneakyThrows;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -13,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description 分布式锁服务
  */
 @Service
-public class LockService {
+public class DistributedLockService {
     @Resource
     private RedissonClient redissonClient;
 
@@ -43,16 +44,5 @@ public class LockService {
             runnable.run();
             return null;
         });
-    }
-
-    @FunctionalInterface
-    public interface Supplier<T> {
-
-        /**
-         * Gets a result.
-         *
-         * @return a result
-         */
-        T get() throws Throwable;
     }
 }

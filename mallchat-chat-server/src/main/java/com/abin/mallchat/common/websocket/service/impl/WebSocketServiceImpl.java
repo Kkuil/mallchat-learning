@@ -10,7 +10,7 @@ import com.abin.mallchat.common.user.service.IRoleService;
 import com.abin.mallchat.common.user.service.LoginService;
 import com.abin.mallchat.common.websocket.NettyUtil;
 import com.abin.mallchat.common.websocket.domain.dto.WSChannelExtraDTO;
-import com.abin.mallchat.common.websocket.domain.vo.resp.WSBaseResp;
+import com.abin.mallchat.common.websocket.domain.vo.resp.WsBaseResp;
 import com.abin.mallchat.common.websocket.service.WebSocketService;
 import com.abin.mallchat.common.websocket.service.adapter.WebSocketAdapter;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -20,7 +20,6 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.SneakyThrows;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -137,7 +136,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     }
 
     /**
-     * todo
+     * 等待用户点击授权
      *
      * @param code 登录码
      */
@@ -147,6 +146,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         if (Objects.isNull(channel)) {
             return;
         }
+        // 一旦用户点击了微信公众号推送的登录按钮，就返回给前端登录成功
         sendMsg(channel, WebSocketAdapter.buildWaitAuthorizeResp());
     }
 
@@ -174,7 +174,7 @@ public class WebSocketServiceImpl implements WebSocketService {
      * @param msg 需要推送的消息
      */
     @Override
-    public void sendMsgToAll(WSBaseResp<?> msg) {
+    public void sendMsgToAll(WsBaseResp<?> msg) {
         // 利用线程池进行推送
         ONLINE_WS_MAP.forEach((channel, ext) -> {
             threadPoolTaskExecutor.execute(() -> sendMsg(channel, msg));
@@ -207,7 +207,7 @@ public class WebSocketServiceImpl implements WebSocketService {
      * @param channel 当前通道
      * @param resp    消息体
      */
-    private void sendMsg(Channel channel, WSBaseResp<?> resp) {
+    private void sendMsg(Channel channel, WsBaseResp<?> resp) {
         channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(resp)));
     }
 

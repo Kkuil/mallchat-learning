@@ -10,14 +10,14 @@ import java.util.List;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description JSON工具类
  */
 public class JsonUtils {
-    private static final ObjectMapper jsonMapper = new ObjectMapper();
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     public static <T> T toObj(String str, Class<T> clz) {
         try {
-            return jsonMapper.readValue(str, clz);
+            return JSON_MAPPER.readValue(str, clz);
         } catch (JsonProcessingException e) {
             throw new UnsupportedOperationException(e);
         }
@@ -25,7 +25,7 @@ public class JsonUtils {
 
     public static <T> T toObj(String str, TypeReference<T> clz) {
         try {
-            return jsonMapper.readValue(str, clz);
+            return JSON_MAPPER.readValue(str, clz);
         } catch (JsonProcessingException e) {
             throw new UnsupportedOperationException(e);
         }
@@ -33,7 +33,7 @@ public class JsonUtils {
 
     public static <T> List<T> toList(String str, Class<T> clz) {
         try {
-            return jsonMapper.readValue(str, new TypeReference<List<T>>() {
+            return JSON_MAPPER.readValue(str, new TypeReference<List<T>>() {
             });
         } catch (JsonProcessingException e) {
             throw new UnsupportedOperationException(e);
@@ -42,7 +42,7 @@ public class JsonUtils {
 
     public static JsonNode toJsonNode(String str) {
         try {
-            return jsonMapper.readTree(str);
+            return JSON_MAPPER.readTree(str);
         } catch (JsonProcessingException e) {
             throw new UnsupportedOperationException(e);
         }
@@ -50,7 +50,7 @@ public class JsonUtils {
 
     public static <T> T nodeToValue(JsonNode node, Class<T> clz) {
         try {
-            return jsonMapper.treeToValue(node, clz);
+            return JSON_MAPPER.treeToValue(node, clz);
         } catch (JsonProcessingException e) {
             throw new UnsupportedOperationException(e);
         }
@@ -58,7 +58,7 @@ public class JsonUtils {
 
     public static String toStr(Object t) {
         try {
-            return jsonMapper.writeValueAsString(t);
+            return JSON_MAPPER.writeValueAsString(t);
         } catch (Exception e) {
             throw new UnsupportedOperationException(e);
         }

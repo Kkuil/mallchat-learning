@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Description: jwt的token生成与解析
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-04-03
+ * @Author Kkuil
+ * @Date 2023/9/18
+ * @Description jwt的token生成与解析
  */
 @Slf4j
 @Component
@@ -33,30 +33,24 @@ public class JwtUtils {
     private static final String CREATE_TIME = "createTime";
 
     /**
-     * JWT生成Token.<br/>
-     * <p>
-     * JWT构成: header, payload, signature
+     * 创建token
+     *
+     * @param uid 用户ID
+     * @return token
      */
     public String createToken(Long uid) {
-        // build token
-        String token = JWT.create()
-                .withClaim(UID_CLAIM, uid) // 只存一个uid信息，其他的自己去redis查
+        // 构建token
+        return JWT.create()
+                .withClaim(UID_CLAIM, uid)
                 .withClaim(CREATE_TIME, new Date())
-                .sign(Algorithm.HMAC256(secret)); // signature
-        return token;
-    }
-
-    public static void main(String[] args) {
-        JwtUtils jwtUtils = new JwtUtils();
-        String token = jwtUtils.createToken(123L);
-        System.out.println(token);
+                .sign(Algorithm.HMAC256(secret));
     }
 
     /**
      * 解密Token
      *
-     * @param token
-     * @return
+     * @param token token
+     * @return 解密信息
      */
     public Map<String, Claim> verifyToken(String token) {
         if (StringUtils.isEmpty(token)) {
@@ -76,8 +70,8 @@ public class JwtUtils {
     /**
      * 根据Token获取uid
      *
-     * @param token
-     * @return uid
+     * @param token token
+     * @return 用户ID
      */
     public Long getUidOrNull(String token) {
         return Optional.ofNullable(verifyToken(token))

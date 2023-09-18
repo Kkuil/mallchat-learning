@@ -7,7 +7,9 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 分布式锁注解
+ * @Author Kkuil
+ * @Date 2023/9/18
+ * @Description 分布式锁注解
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

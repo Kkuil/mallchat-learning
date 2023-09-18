@@ -112,7 +112,6 @@ public class WxPortalController {
             if (outMessage == null) {
                 return "";
             }
-
             out = outMessage.toXml();
         }
         if (WX_ENC_TYPE_AES.equalsIgnoreCase(encType)) {

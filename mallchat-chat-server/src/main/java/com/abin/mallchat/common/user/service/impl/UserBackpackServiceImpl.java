@@ -2,7 +2,6 @@ package com.abin.mallchat.common.user.service.impl;
 
 import com.abin.mallchat.common.common.annotation.RedissonLock;
 import com.abin.mallchat.common.common.domain.enums.YesOrNoEnum;
-import com.abin.mallchat.common.common.service.LockService;
 import com.abin.mallchat.common.user.dao.UserBackpackDao;
 import com.abin.mallchat.common.user.domain.entity.UserBackpack;
 import com.abin.mallchat.common.user.domain.enums.IdempotentEnum;

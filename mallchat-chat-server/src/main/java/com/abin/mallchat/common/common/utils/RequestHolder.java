@@ -3,22 +3,22 @@ package com.abin.mallchat.common.common.utils;
 import com.abin.mallchat.common.common.domain.dto.RequestInfo;
 
 /**
- * Description: 请求上下文
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-09-09
+ * @Author Kkuil
+ * @Date 2023/9/18
+ * @Description 请求上下文
  */
 public class RequestHolder {
-    private static final ThreadLocal<RequestInfo> threadLocal = new ThreadLocal<RequestInfo>();
+    private static final ThreadLocal<RequestInfo> THREAD_LOCAL = new ThreadLocal<RequestInfo>();
 
     public static void set(RequestInfo requestInfo) {
-        threadLocal.set(requestInfo);
+        THREAD_LOCAL.set(requestInfo);
     }
 
     public static RequestInfo get() {
-        return threadLocal.get();
+        return THREAD_LOCAL.get();
     }
 
     public static void remove() {
-        threadLocal.remove();
+        THREAD_LOCAL.remove();
     }
 }

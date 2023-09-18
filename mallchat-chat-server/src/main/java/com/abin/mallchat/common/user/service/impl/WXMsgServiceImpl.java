@@ -30,8 +30,20 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Slf4j
 public class WXMsgServiceImpl implements WxMsgService {
+
+    /**
+     * 微信事件前缀
+     */
     public static final String WX_PREFIX_EVENT_KEY = "qrscene_";
+
+    /**
+     * 推送授权消息模板
+     */
     public static final String WX_AUTH_MSG = "请点击登录：<a href='%s'>登录</a>";
+
+    /**
+     * 微信回调路径
+     */
     public static final String WX_CALLBACK_PATH = "/wx/portal/public/callBack";
     @Resource
     private WebSocketService webSocketService;

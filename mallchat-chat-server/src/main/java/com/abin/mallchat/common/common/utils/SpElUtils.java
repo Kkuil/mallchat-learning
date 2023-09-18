@@ -13,23 +13,42 @@ import java.util.Optional;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description SpringEl表达式工具类
  */
 public class SpElUtils {
-    private static final ExpressionParser PARSER = new SpelExpressionParser();
+
+    /**
+     * Spring内置的SpringEl表达式解析器
+     */
+    private static final ExpressionParser SPRING_EL_PARSER = new SpelExpressionParser();
+
+    /**
+     * 获取入参具体名称
+     */
     private static final DefaultParameterNameDiscoverer PARAMETER_NAME_DISCOVERER = new DefaultParameterNameDiscoverer();
 
     public static String getMethodKey(Method method) {
         return method.getDeclaringClass() + "#" + method.getName();
     }
 
+    /**
+     * 解析El表达式
+     *
+     * @param method 方法对象
+     * @param args   参数值
+     * @param spEl   el表达式
+     * @return 解析值
+     */
     public static String parseSpEl(Method method, Object[] args, String spEl) {
+        // 使用Optional来进行选择是否有入参，如果没有则返回空字符串数组
         String[] params = Optional.ofNullable(PARAMETER_NAME_DISCOVERER.getParameterNames(method)).orElse(new String[]{});
-        EvaluationContext context = new StandardEvaluationContext();//el解析需要的上下文对象
+        // 构造el解析需要的上下文对象
+        EvaluationContext context = new StandardEvaluationContext();
         for (int i = 0; i < params.length; i++) {
-            context.setVariable(params[i], args[i]);//所有参数都作为原材料扔进去
+            // 所有参数与值一一对应扔进去
+            context.setVariable(params[i], args[i]);
         }
-        Expression expression = PARSER.parseExpression(spEl);
+        Expression expression = SPRING_EL_PARSER.parseExpression(spEl);
         return expression.getValue(context, String.class);
     }
 }
