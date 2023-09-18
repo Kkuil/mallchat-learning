@@ -21,23 +21,46 @@ import static me.chanjar.weixin.common.api.WxConsts.EventType.SUBSCRIBE;
 import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.EVENT;
 
 /**
- * wechat mp configuration
- *
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
+ * @Author Kkuil
+ * @Description 微信配置类
+ * @Date 2023/09/18
  */
 @AllArgsConstructor
 @Configuration
 @EnableConfigurationProperties(WxMpProperties.class)
 public class WxMpConfiguration {
+
+    /**
+     * 日志处理器
+     */
     private final LogHandler logHandler;
+
+    /**
+     * 消息处理器
+     */
     private final MsgHandler msgHandler;
+
+    /**
+     * 订阅处理器
+     */
     private final SubscribeHandler subscribeHandler;
+
+    /**
+     * 扫码处理器
+     */
     private final ScanHandler scanHandler;
+
+
     private final WxMpProperties properties;
 
+    /**
+     * 微信mp服务配置
+     *
+     * @return 微信mp服务
+     */
     @Bean
     public WxMpService wxMpService() {
-        // 代码里 getConfigs()处报错的同学，请注意仔细阅读项目说明，你的IDE需要引入lombok插件！！！！
+        // 代码里 getConfigs() 处报错的同学，请注意仔细阅读项目说明，你的IDE需要引入lombok插件！！！！
         final List<WxMpProperties.MpConfig> configs = this.properties.getConfigs();
         if (configs == null) {
             throw new RuntimeException("大哥，拜托先看下项目首页的说明（readme文件），添加下相关配置，注意别配错了！");
@@ -53,26 +76,28 @@ public class WxMpConfiguration {
                     configStorage.setToken(a.getToken());
                     configStorage.setAesKey(a.getAesKey());
                     return configStorage;
-                }).collect(Collectors.toMap(WxMpDefaultConfigImpl::getAppId, a -> a, (o, n) -> o)));
+                })
+                .collect(Collectors.toMap(WxMpDefaultConfigImpl::getAppId, a -> a, (o, n) -> o)));
         return service;
     }
 
+    /**
+     * 微信用户触发事件路由表
+     *
+     * @param wxMpService 微信mp服务
+     * @return 微信路由表
+     */
     @Bean
     public WxMpMessageRouter messageRouter(WxMpService wxMpService) {
         final WxMpMessageRouter newRouter = new WxMpMessageRouter(wxMpService);
-
         // 记录所有事件的日志 （异步执行）
         newRouter.rule().handler(this.logHandler).next();
-
         // 关注事件
-        newRouter.rule().async(false).msgType(EVENT).event(SUBSCRIBE).handler(this.subscribeHandler).end();
-
+        newRouter.rule().async(false).msgType(EVENT).event(EventType.SUBSCRIBE).handler(this.subscribeHandler).end();
         // 扫码事件
         newRouter.rule().async(false).msgType(EVENT).event(EventType.SCAN).handler(this.scanHandler).end();
-
         // 默认
         newRouter.rule().async(false).handler(this.msgHandler).end();
-
         return newRouter;
     }
 

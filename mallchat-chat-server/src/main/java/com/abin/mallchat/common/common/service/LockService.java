@@ -5,9 +5,9 @@ import com.abin.mallchat.common.common.exception.CommonErrorEnum;
 import lombok.SneakyThrows;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**

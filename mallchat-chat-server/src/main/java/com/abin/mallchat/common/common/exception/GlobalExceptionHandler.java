@@ -34,8 +34,7 @@ public class GlobalExceptionHandler {
     /**
      * 最后一道防线
      *
-     * @param e
-     * @return
+     * @param e 异常
      */
     @ExceptionHandler(value = Throwable.class)
     public ApiResult<?> throwable(Throwable e) {

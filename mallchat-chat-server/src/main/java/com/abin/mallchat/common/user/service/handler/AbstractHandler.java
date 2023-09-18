@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
+ * @Author Kkuil
+ * @Description 抽象处理器
+ * @Date 2023/09/18
  */
 public abstract class AbstractHandler implements WxMpMessageHandler {
     protected Logger logger = LoggerFactory.getLogger(getClass());

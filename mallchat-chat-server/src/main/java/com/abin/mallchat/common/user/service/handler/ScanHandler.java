@@ -1,27 +1,32 @@
 package com.abin.mallchat.common.user.service.handler;
 
-import com.abin.mallchat.common.user.service.WXMsgService;
-import com.abin.mallchat.common.user.service.adapter.TextBuilder;
-import me.chanjar.weixin.common.error.WxErrorException;
+import com.abin.mallchat.common.user.service.WxMsgService;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.net.URLEncoder;
+import javax.annotation.Resource;
 import java.util.Map;
 
+/**
+ * @Author Kkuil
+ * @Description 微信扫码处理器
+ * @Date 2023/09/18
+ */
 @Component
 public class ScanHandler extends AbstractHandler {
     @Resource
-    private WXMsgService wxMsgService;
-    @Override
-    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map,
+    private WxMsgService wxMsgService;
 
-                                    WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
+    @Override
+    public WxMpXmlOutMessage handle(
+            WxMpXmlMessage wxMpXmlMessage,
+            Map<String, Object> map,
+            WxMpService wxMpService,
+            WxSessionManager wxSessionManager
+    ) {
         return wxMsgService.scan(wxMpXmlMessage);
     }
 

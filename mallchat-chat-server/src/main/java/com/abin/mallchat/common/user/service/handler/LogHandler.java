@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * @author <a href="https://github.com/binarywang">Binary Wang</a>
+ * @Author Kkuil
+ * @Description 日志处理器
+ * @Date 2023/09/18
  */
 @Component
 @Slf4j

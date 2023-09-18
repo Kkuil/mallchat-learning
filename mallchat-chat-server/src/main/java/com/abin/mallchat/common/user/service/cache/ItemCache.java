@@ -7,12 +7,13 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description 物品缓存
  */
 @Component
 public class ItemCache {

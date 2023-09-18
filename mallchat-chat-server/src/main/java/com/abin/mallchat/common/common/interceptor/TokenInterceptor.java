@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -16,7 +17,7 @@ import java.util.Optional;
 /**
  * @Author Kkuil
  * @Date 2023/09/17 17:00
- * @Description 
+ * @Description token拦截器
  */
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
@@ -32,7 +33,8 @@ public class TokenInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = getToken(request);
         Long validUid = loginService.getValidUid(token);
-        if (Objects.nonNull(validUid)) {//用户有登录态
+        // 用户有登录态
+        if (Objects.nonNull(validUid)) {
             request.setAttribute(UID, validUid);
         } else {//用户未登录
             boolean isPublicURI = isPublicURI(request);
